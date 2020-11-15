@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Find your doctor{% endblock %}
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
+
+<h3>Find a health care provider who speaks your language:</h3>
+
+<div id="search">
+  <form id="get-doctor" action="/" method="GET">
+  <input autocomplete="on" autofocus name="value_searched" placeholder="Name or especialty" type="text">
+  <button type="submit">Search</button>
+  </form>
+</div>
+
+{% if doctors %}
+<div id="results">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Specialty</th>
+        <th scope="col">Address</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for doctor in doctors %}
+      <tr>
+        <td><a href="/doctor/{{doctor['doctor_id']}}">{{ doctor['full_name'] }}</a></td>
+        <td>{{ doctor['specialty'] }}</td>
+        <td>{{ doctor['address'] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+<section id="map">
+  <script src="/static/map.js" type="application/javascript"></script>
+  <nav id="filter-group" class="filter-group"></nav>
+</section>
+
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
