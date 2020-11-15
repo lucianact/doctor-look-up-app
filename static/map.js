@@ -12,7 +12,8 @@ const doctorMarkers = [];
 const getDoctor = document.querySelector('#get-doctor');
 
 getDoctor.addEventListener('submit', (evt) => { 
-    // evt.preventDefault();
+    evt.preventDefault();
+    // update map and generate table 
     let specialty = getDoctor.value;
     console.log(`/doctor-by-specialty/${specialty}`)
 

@@ -33,7 +33,7 @@ def homepage():
           return render_template("mapform.html", doctors=[])
 
     doctors = db.session.execute("""
-                            SELECT full_name, array_to_string(array_agg(doctor_id), ', ') AS doctor_id, array_to_string(array_agg(address), ', ') AS address, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
+                            SELECT full_name, max(doctor_id) AS doctor_id, array_to_string(array_agg(address), ', ') AS address, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
                             (SELECT doctors.full_name, doctors.doctor_id, doctors.address, specialties.specialty
                             FROM doctors
                             INNER JOIN doctors_specialties ON doctors_specialties.doctor_id = doctors.doctor_id 
@@ -148,7 +148,7 @@ def add_new_doctor_form():
 
     # new_doctor = crud.add_new_doctor(name, spanish, portuguese, address)
     # new_specialty = crud.add_a_new_specialty(specialty)
-
+    # errors
     
     return render_template('docform.html', specialties=specialties)
 
@@ -157,8 +157,7 @@ def add_new_doctor_form():
 def doctor(doctor_id):
     """Return profile of the given doctor."""
 
-    docls = crud.get_doctor_by_id(doctor_id)
-    # some errors going on with the search
+    docls = crud.get_doctor_by_id(doctor_id) 
 
     for doc in docls:
         doc_name = doc.full_name 
@@ -167,6 +166,7 @@ def doctor(doctor_id):
 
     if doc_name is None:
         return "Doctor not found on Database"
+
     
     return render_template("dprofile.html", doctor=doc_name, address=doc_address)
 
