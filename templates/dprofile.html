@@ -1,11 +1,32 @@
 {% extends 'base.html' %}
-
-{% block title %}Search{% endblock %}
-
+{% block title %}{{doctor_name}}{% endblock %}
 {% block body %}
 
-<h1>Hello {{doctor}}</h1>
-<h1>Hi {{address}}</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+
+
+<h3> {{doctor_name}} </h3> <button>♡</button>
+<p>Addres: {{address}}</p>
+<p>Phone number: 415-849-6862</p>
+<p>Languages: {{portuguese}} {{spanish}} </p>
+<p>Accepting new patients</p>
+
+Rating:     <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+
+
+<fieldset>
+    <legend>Reviews: </legend>
+{% for review in reviews %}
+<p>{{review}}</p>
+{% endfor %}
+</fieldset>
+
+
+<p><a href="/review/{{doctor_id}}">Write a review for {{doctor_name}}</a></p>
 
 {% endblock %}

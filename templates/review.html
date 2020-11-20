@@ -1,15 +1,32 @@
 {% extends 'base.html' %}
-{% block title %}Write a review{% endblock %}
+{% block title %}Add a review{% endblock %}
 {% block body %}
 
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
 
-<h1>Write this doctor a review</h1>
+<br>
 
-<form action=>
+<h1>Write a review:</h1>
+
+<form action="/review/{{id}}" method="POST">
 <label for="doctors-review">Review:</label>
-<textarea id="review" name="review" rows="4" cols="50">
-  At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
-  </textarea>
-  <br><br>
-  <input type="submit" value="Submit">
+<textarea id="review" name="review" rows="4" cols="50"></textarea>
+<input type="submit" value="Submit">
+<br>
+<div class="rating">
+    <label for="review-ating">Rating</label>
+    <select name="rating" id="rating">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+</div>
 </form>
+
+
+
+{% endblock %}

@@ -2,40 +2,83 @@
 {% block title %}Add a new doctor{% endblock %}
 {% block body %}
 
-<br>
-<fieldset>
-  <section id="doctor-name">
-    <h2>Add a doctor to our database:</h2>
-      Name: <input type="text" name="fullname" placeholder="Ex: Dr. Barry W. Lee" required><br>
-            <small>Please write doctor's full name</small>
-  </section>
+<div id='html' style="display: none">
 
-  <section id="doctor-specialty">
-    <p> Is the doctor's specialties in our database?<p>
-    <select id="get-doctor-specialty" name="doctor-specialty">
-      <option value="Other">Other</option>
-      {% for specialty in specialties %}
-      <option value="{{specialty.specialty}}">{{specialty.specialty}}</option>
-      {% endfor %}
-    </select>
-  </section>
-  <!-- <option>Other:<input type="text"></option> -->
+  <select id="get-doctor-specialty" name="doctor-specialty" required>
 
-  <section id="doctor-language">
-  Languages spoken: <br>
-  Spanish <input name='spanish' type='checkbox' value='TRUE'/><br>
-  Portuguese <input name='portuguese' type='checkbox' value='TRUE'/>
-  </section>
+    <option value="" disabled selected>Select specialty</option>
+    <option value="Other">Other</option>
+    {% for specialty in specialties %}
+    <option value="{{specialty.specialty}}">{{specialty.specialty}}</option>
+    {% endfor %}
 
-  <br>
+  </select>
 
-  <section id="doctor-address">
-  Address: <input type="text" name="address" required><br>
-    <small>Please follow example: 929 Clay St, Suite 501, San Francisco, CA 94108</small>
-  </section>
+  <button onclick="addSpecialtySection()">+</button>
 
-<br>
-<input type="submit">
+  <div id="other" style="display: none">
+    <p>Other:<input type="text" name="other"></p>
+  </div>
+
+</div>
+
+<form action="/doctorform" method="GET">
+
+  <fieldset>
+
+    <legend>Add a doctor to our database:</legend>
+
+    <section id="doctor-name">
+      Name: <input type="text" name="fullname" required><br>
+      <small>Please write doctor's full name. </small>
+    </section>
+
+    <div id="js"><p>Is the doctor's specialty in our database?</p></div>
+
+    <section id="doctor-language">
+      Languages spoken: <br>
+      Spanish <input name='spanish' type='checkbox' value='TRUE'/><br>
+      Portuguese <input name='portuguese' type='checkbox' value='TRUE'/>
+    </section>
+
+    <section id="doctor-address">
+      <p>Address: <input type="text" name="address" required><br>
+        <small>Please follow example: 929 Clay St, Suite 501, San Francisco, CA 94108.</small></p>
+    </section>
+
+      <input type="submit">
+
+  </fieldset>
+
 </form>
-</fieldset>
+
+
+<script> 
+
+  function addSpecialtySection () {
+    
+    let div = document.getElementById("js");
+    let template = document.getElementById("html");
+    let specialtySection = document.createElement("section");
+    let index = div.childNodes.length + 1;
+
+    specialtySection.setAttribute("id", "specialties" + index);
+    specialtySection.innerHTML = template.innerHTML;
+    div.appendChild(specialtySection);
+
+    let specialtyInput = specialtySection.childNodes[1];
+    let other = specialtySection.childNodes[5];
+
+    specialtyInput.addEventListener ("change", function() {
+      console.log("Hi")
+      if (specialtyInput.value == "Other") {
+        other.style.display = "block";
+      } else {
+        other.style.display = "none";
+      }
+    });
+  }
+
+  addSpecialtySection(); 
+</script>
 {% endblock %}

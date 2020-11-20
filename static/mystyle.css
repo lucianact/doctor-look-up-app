@@ -65,3 +65,7 @@
 .dropdown:hover .dropdown-content {
     display: block;
   }
+
+.checked {
+    color: orange;
+}

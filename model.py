@@ -69,18 +69,21 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'User: {self.username}, email:{self.email}'
 
-# class Review(db.Model):
-#     """A review written by an user"""
+class Review(db.Model):
+    """A review written by an user"""
 
-#     __tablename__ = 'reviews'
+    __tablename__ = 'reviews'
 
-#     review_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-#     review_content = db.Column(db.Text, nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.user.id'), nullable=False)
+    review_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.doctor_id'), nullable=False)
+    username = db.Column(db.String(120), db.ForeignKey('users.username'), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    review_content = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer)
 
-#     def __repr__(self):
-#         return f'Review: {self.title}, date: {self.date_posted}' 
+    def __repr__(self):
+        return f'{self.review_content} date: {self.date_posted} by {self.username}' 
  
 
 def connect_to_db(flask_app, db_uri='postgresql:///medical', echo=True):

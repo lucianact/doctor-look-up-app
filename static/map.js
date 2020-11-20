@@ -3,23 +3,15 @@ var map = new mapboxgl.Map({
 container: 'map', // container id
 style: 'mapbox://styles/mapbox/streets-v11', // style URL
 center: [-122.446, 37.7653], // starting position [lng, lat]
-zoom: 8 // starting zoom
+zoom: 11 // starting zoom
 });
 
 const doctorMarkers = [];
 
-// const getDoctorSpecialty = document.querySelector('#get-doc-specialty');
-const getDoctor = document.querySelector('#get-doctor');
-
-getDoctor.addEventListener('submit', (evt) => { 
-    evt.preventDefault();
-    // update map and generate table 
-    let specialty = getDoctor.value;
-    console.log(`/doctor-by-specialty/${specialty}`)
-
+function showMap(url) {
 
     fetch(
-        `/doctor-by-specialty/${specialty}`
+        url
     ).then(
         response => response.json()
     ).then(
@@ -30,11 +22,11 @@ getDoctor.addEventListener('submit', (evt) => {
             for (var doctor of doctors) {
                 var marker = new mapboxgl.Marker()
                     .setLngLat([doctor.coordinates.longitude, doctor.coordinates.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML(`<h1>${doctor.full_name}</h1><br><p>${doctor.address}`))
+                    .setPopup(new mapboxgl.Popup().setHTML(`<h1>${doctor.full_name}</h1><p>${doctor.address}`))
                     .addTo(map);
                 doctorMarkers.push(marker);
             }
         }
     );
-});
+}
 // marker.togglePopup(); 
