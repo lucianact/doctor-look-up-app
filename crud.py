@@ -1,4 +1,4 @@
-from model import db, Doctor, Specialty, DoctorSpecialty, User, Review, connect_to_db
+from model import db, Doctor, Specialty, DoctorSpecialty, User, Review, Favorite, connect_to_db
 from flask_sqlalchemy import SQLAlchemy
 from geocode import geo_code
 
@@ -63,23 +63,112 @@ def add_new_doctor(full_name, spanish, portuguese, address):
     return new_doctor
 
 def add_new_specialty(specialty):
-    """Add a new doctor to the database."""
+    """Add a new specialty to the database."""
     new_specialty = Specialty(specialty=specialty)
-    db.session.add(specialty)
+    db.session.add(new_specialty)
     db.session.commit() 
     return new_specialty
 
-def add_review(user_id, username, doctor_id, review_content, rating):
-    """Add review to the database"""
-    review = Review(user_id=user_id, username=username, doctor_id=doctor_id, review_content=review_content, rating=rating)
+def set_specialties(doctor_id, specialty_ids):
+    """Conect doctors with their specialties"""
+
+    new_links = []
+
+    for id in specialty_ids:
+        new_link = DoctorSpecialty(doctor_id=doctor_id, specialty_id=id)
+        new_links.append(new_link)
+        db.session.add(new_link)
+    
+    db.session.commit()
+
+    return new_links
+
+def add_review(user_id, doctor_id, review_content, rating):
+    """Add review to the database."""
+    review = Review(user_id=user_id, doctor_id=doctor_id, review_content=review_content, rating=rating)
     db.session.add(review)
     db.session.commit()
     return review
 
-def get_review_by_doctor(doctor_id):
-    """Get review by doctor ID"""
-
+def get_doctor_reviews(doctor_id):
+    """Get review by doctor ID."""
     return Review.query.filter(Review.doctor_id==doctor_id).all()
+
+def get_reviews_by_user(user_id):
+    """Get reviews written by user."""
+    return Review.query.filter(Review.user_id==user_id).all()
+
+def reviews_info(user_id):
+
+    info = db.session.query(Review, 
+                            Review.date_posted, 
+                            User.username,
+                            Doctor.doctor_id, 
+                            Doctor.full_name).join(Doctor).join(User, User.user_id==Review.user_id).filter(Review.user_id==User.user_id).all()
+    
+    return info
+
+def add_favorite(user_id, doctor_id):
+    """Add doctor to favorites table"""
+    
+    favorite = Favorite(user_id=user_id, doctor_id=doctor_id)
+    db.session.add(favorite)
+    db.session.commit()
+    
+
+def delete_favorite(user_id, doctor_id):
+    """Delete doctor from favorites table"""
+
+    favorites = Favorite.query.filter(Favorite.user_id==user_id, Favorite.doctor_id==doctor_id).all()
+
+    for fav in favorites:
+        db.session.delete(fav)
+    db.session.commit()
+
+def is_favorited(user_id, doctor_id):
+    var = Favorite.query.filter(Favorite.user_id==user_id, Favorite.doctor_id==doctor_id).count()
+    print("isFavorited", user_id, doctor_id, var)
+    return var
+
+def doctors_liked_by_user(user_id):
+    
+    doctors = db.session.query(Favorite,
+                                Doctor.doctor_id, 
+                                Doctor.full_name).join(Doctor).join(User, User.user_id==Favorite.user_id).filter(Favorite.user_id==User.user_id).all()
+
+    return doctors
+
+def health_provider_search(search):
+
+    doctors = db.session.execute("""
+                            SELECT full_name, address, max(doctor_id) AS doctor_id, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
+                            (SELECT doctors.full_name, doctors.doctor_id, doctors.address, specialties.specialty
+                            FROM doctors
+                            INNER JOIN doctors_specialties ON doctors_specialties.doctor_id = doctors.doctor_id 
+                            INNER JOIN specialties ON specialties.specialty_id = doctors_specialties.specialty_id) AS D
+                            WHERE D.full_name ILIKE :search OR D.specialty ILIKE :search GROUP BY full_name, address;""",
+                            {"search": f"%{search}%"}).fetchall()
+    
+    return doctors
+
+def map_search(search):
+
+    doctors = db.session.execute("""
+                            SELECT full_name, address, longitude, latitude, max(doctor_id) AS doctor_id, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
+                            (SELECT doctors.full_name, doctors.doctor_id, doctors.address, specialties.specialty, doctors.longitude, doctors.latitude
+                            FROM doctors
+                            INNER JOIN doctors_specialties ON doctors_specialties.doctor_id = doctors.doctor_id 
+                            INNER JOIN specialties ON specialties.specialty_id = doctors_specialties.specialty_id) AS D
+                            WHERE D.full_name ILIKE :search OR D.specialty ILIKE :search GROUP BY full_name, address, longitude, latitude;""",
+                            {"search": f"%{search}%"}).fetchall()
+    
+    return doctors
+
+
+
+
+
+
 
 
 # def tests():
@@ -97,6 +186,8 @@ def get_review_by_doctor(doctor_id):
     # return Doctor.query.filter((Doctor.portuguese == True) | (Doctor.spanish == True)).all()
     
 
+
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)
+

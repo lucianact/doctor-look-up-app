@@ -14,7 +14,7 @@
 
   </select>
 
-  <button onclick="addSpecialtySection()">+</button>
+  <button id="button" onclick="addSpecialtySection()">+</button>
 
   <div id="other" style="display: none">
     <p>Other:<input type="text" name="other"></p>
@@ -22,7 +22,7 @@
 
 </div>
 
-<form action="/doctorform" method="GET">
+<form action="/doctorform" method="POST">
 
   <fieldset>
 
@@ -33,7 +33,7 @@
       <small>Please write doctor's full name. </small>
     </section>
 
-    <div id="js"><p>Is the doctor's specialty in our database?</p></div>
+    <div id="js"><p>Is the doctor's specialty in our database?</p></div><br>
 
     <section id="doctor-language">
       Languages spoken: <br>
@@ -70,7 +70,6 @@
     let other = specialtySection.childNodes[5];
 
     specialtyInput.addEventListener ("change", function() {
-      console.log("Hi")
       if (specialtyInput.value == "Other") {
         other.style.display = "block";
       } else {

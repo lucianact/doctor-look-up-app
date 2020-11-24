@@ -77,14 +77,21 @@ class Review(db.Model):
     review_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.doctor_id'), nullable=False)
-    username = db.Column(db.String(120), db.ForeignKey('users.username'), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     review_content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer)
 
     def __repr__(self):
-        return f'{self.review_content} date: {self.date_posted} by {self.username}' 
+        return f'{self.review_content}' 
  
+class Favorite(db.Model):
+    
+    __tablename__ = 'favorites'
+
+    favorite_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.doctor_id'), nullable=False)
+
 
 def connect_to_db(flask_app, db_uri='postgresql:///medical', echo=True):
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = db_uri

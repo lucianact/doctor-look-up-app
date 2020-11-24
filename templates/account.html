@@ -2,10 +2,24 @@
 {% block title %}My Account{% endblock %}
 {% block body %}
 
-<h1> Hello {{current_user.username}} </h1>
+<h1> Hello {{username}} </h1>
 
-<p>Doctors you liked:</p>
+<h2>Reviews you wrote:</h2>
 
-<p>Reviews you wrote:</p>
+{% for review in reviews %}
+{% for doctor in doctors %}
+{% for id in ids %}
+<p>{{review}} for <a href="/doctor/{{id}}">{{doctor}}</a></p>
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+<h2>Doctors you liked:</h2>
+
+{% for liked_id in doctors_liked_id %}
+{% for doctor_name in doctors_liked_name %}
+<p><a href="/doctor/{{liked_id}}">{{doctor_name}}</a></p>
+{% endfor %}
+{% endfor %}
 
 {% endblock %}

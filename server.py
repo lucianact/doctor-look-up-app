@@ -3,7 +3,7 @@
 from flask import Flask, jsonify, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
-from model import connect_to_db, User, db
+from model import connect_to_db, User, db, Review, Doctor
 import crud
 from jinja2 import StrictUndefined
 import random
@@ -32,14 +32,7 @@ def homepage():
           flash("You must provide a term to search")
           return render_template("mapform.html", doctors=[])
 
-    doctors = db.session.execute("""
-                            SELECT full_name, address, max(doctor_id) AS doctor_id, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
-                            (SELECT doctors.full_name, doctors.doctor_id, doctors.address, specialties.specialty
-                            FROM doctors
-                            INNER JOIN doctors_specialties ON doctors_specialties.doctor_id = doctors.doctor_id 
-                            INNER JOIN specialties ON specialties.specialty_id = doctors_specialties.specialty_id) AS D
-                            WHERE D.full_name ILIKE :search OR D.specialty ILIKE :search GROUP BY full_name, address;""",
-                            {"search": f"%{search}%"}).fetchall()
+    doctors = crud.health_provider_search(search)
 
     if not doctors:
         flash("We couldn't find anything related to your search")
@@ -54,15 +47,7 @@ def search_json():
     if search is None or not search.strip():
         return jsonify([])
 
-    doctors = db.session.execute("""
-                            SELECT full_name, address, longitude, latitude, max(doctor_id) AS doctor_id, array_to_string(array_agg(specialty), ', ') AS specialty FROM 
-                            (SELECT doctors.full_name, doctors.doctor_id, doctors.address, specialties.specialty, doctors.longitude, doctors.latitude
-                            FROM doctors
-                            INNER JOIN doctors_specialties ON doctors_specialties.doctor_id = doctors.doctor_id 
-                            INNER JOIN specialties ON specialties.specialty_id = doctors_specialties.specialty_id) AS D
-                            WHERE D.full_name ILIKE :search OR D.specialty ILIKE :search GROUP BY full_name, address, longitude, latitude;""",
-                            {"search": f"%{search}%"}).fetchall()
-
+    doctors = crud.map_search(search)
 
     return jsonify([{
         "full_name": doctor["full_name"],
@@ -130,12 +115,13 @@ def login():
         return redirect(url_for('homepage'))
   
     form = UserLogIn()
-    user = User.query.filter_by(username=form.username.data).first()
     if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user)
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
             flash("You're logged in!")
-            return redirect(url_for('homepage'))
+            return redirect(next_page) if next_page else redirect(url_for('homepage'))
         else:
             flash('Something went wrong! Please check your password and username and try again.')
             return render_template('login.html', form=form)
@@ -154,57 +140,110 @@ def logout():
 @login_required
 def user_account():
     """Return user's account."""
-    return render_template('account.html')
+
+    username = current_user.username
+    user_id = current_user.get_id()
+   
+    info = crud.reviews_info(user_id)
+    print(info)
+
+    doctors_liked = crud.doctors_liked_by_user(user_id)
+    print(doctors_liked)
+
+    doctors_liked_id = []
+    doctors_liked_name = []
+
+    for element in doctors_liked:
+        doctors_liked_id.append(element[1])
+        doctors_liked_name.append(element[2])
+    
+    print(doctors_liked_id)
+    print(doctors_liked_name)
+
+    doctors = []
+    ids = []
+    reviews = []
+
+    for element in info:
+        doctors.append(element[4])
+        ids.append(element[3])
+        reviews.append(element[0])
+
+    print(ids)
+    print(doctors)
+    print(reviews)
+
+    return render_template('account.html', 
+                            username=username, 
+                            doctors=doctors, 
+                            reviews=reviews, 
+                            ids=ids,
+                            doctors_liked_id=doctors_liked_id,
+                            doctors_liked_name=doctors_liked_name)
 
 
-@app.route("/doctorform", methods=['GET', 'POST'])
+@app.route("/doctorform", methods=['GET','POST'])
 # @login_required
 def add_new_doctor_form():
 
+    doctors = crud.get_doctors()
+    print(doctors)
+
     specialties = crud.get_specialties()
+    print(specialties)
 
-    #values as all none:
+    if request.method == 'POST':
 
-    # name = request.form.get("fullname")
-    # specialty = request.form.get('doctor-specialty')
-    # spanish = bool(request.form.get("spanish"))
-    # portuguese = bool(request.form.get("portuguese"))
-    # address = request.form.get("doctor-specialty")
+        # info for doctors table:
+        name = request.form.get("fullname")
+        spanish = bool(request.form.get("spanish"))
+        portuguese = bool(request.form.get("portuguese"))
+        address = request.form.get("address")
 
-    # values are not none, but specialty value is only from the first form:
+        # print(request.form)
 
-    name = request.args.get("fullname")
-    specialty = request.args.get('doctor-specialty')
-    spanish = bool(request.args.get("spanish"))
-    portuguese = bool(request.args.get("portuguese"))
-    address = request.args.get("doctor-specialty")
+        # info for specialty table: 
+        form_specialties = request.form.getlist("doctor-specialty") + request.form.getlist("other")
+        print(form_specialties)
+        form_specialties = [specialty for specialty in form_specialties if specialty != "Other" and specialty!= ""] # list comprehension
+        print(form_specialties)
+        
+        # for unique values
+        form_specialties = set(form_specialties)
+        form_specialties = list(form_specialties)
 
-    # what if the user adds two new "other" specialties
-    # how this conditional would work?
-    if specialty == "Other":
-        specialty = request.args.get('other')
+        if name not in doctors:
+            new_doctor = crud.add_new_doctor(name, spanish, portuguese, address)
+        
+        specialty_id_list = []
+        for specialty in form_specialties:
+            if specialty in specialties:
+                specialty_id_list.append(specialty.specialty_id)
+            else: 
+                new_specialty = crud.add_new_specialty(specialty)
+                specialty_id_list.append(new_specialty.specialty_id)
+        
+        print(specialty_id_list)
 
+        doctor_id = new_doctor.doctor_id
+        
+        new_link = crud.set_specialties(doctor_id, specialty_id_list)
 
-    # should my form be GET or POST then? 
-
-    # import pdb
-    # pdb.set_trace()   
-
-
-    # new_doctor = crud.add_new_doctor(name, spanish, portuguese, address)
-    # new_specialty = crud.add_a_new_specialty(specialty)
 
     return render_template('docform.html', specialties=specialties)
 
 
-@app.route("/doctor/<doctor_id>", methods=["GET"])
+@app.route("/doctor/<doctor_id>", methods=["GET", "POST"])
 # @login_required
 def doctor(doctor_id):
     """Return profile of the given doctor."""
 
     doctor_id = doctor_id
     doctor_info = crud.get_doctor_by_id(doctor_id) 
-    doctor_review = crud.get_review_by_doctor(doctor_id)
+    doctor_review = crud.get_doctor_reviews(doctor_id)
+    print(doctor_review)
+    user_id = current_user.get_id()
+    is_favorited = crud.is_favorited(user_id, doctor_id)
 
     for info in doctor_info:
         name = info.full_name 
@@ -228,7 +267,8 @@ def doctor(doctor_id):
                             address=address, 
                             portuguese=portuguese, 
                             spanish=spanish,
-                            reviews=doctor_review)
+                            reviews=doctor_review,
+                            is_favorited=is_favorited)
 
 
 @app.route("/review/<doctor_id>", methods=["GET", "POST"])
@@ -245,12 +285,36 @@ def write_review(doctor_id):
     if review is None or not review.strip():
           flash("You must provide a valid text")
     else:
-        review = crud.add_review(user_id, username, doctor_id, review, rating)
+        review = crud.add_review(user_id, doctor_id, review, rating)
         flash("Thank you for submitting a review")
         return redirect(url_for('homepage'))
         # return redirect("/doctor/<doctor_id>") ?
 
     return render_template("review.html", id=doctor_id)
+
+
+@app.route("/favorite/<int:doctor_id>", methods=["POST"])
+@login_required
+def add_favorites(doctor_id):
+
+    user_id = current_user.get_id()
+    print(user_id, doctor_id)
+
+    favorite = crud.add_favorite(user_id, doctor_id)
+
+    return jsonify({"isFavorited" : True})
+
+@app.route("/unfavorite/<int:doctor_id>", methods=["POST"])
+@login_required
+def delete_favorites(doctor_id):
+
+    user_id = current_user.get_id()
+    print(user_id, doctor_id)
+    unfavorite = crud.delete_favorite(user_id, doctor_id)
+
+
+    return jsonify({"isFavorited" : False})
+
 
 
 if __name__ == '__main__':

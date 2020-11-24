@@ -19,22 +19,14 @@
     <div class="navbar">
         <a>¿ Hablas Portuñol ?</a>
         <a href="/">| Home</a>
+        {% if current_user.is_authenticated %}
         <a href="/doctorform">| Add a doctor</a>
-        <div class="dropdown">
-          <button class="dropbtn">| User
-          <i class="fa fa-caret-down"></i>
-          </button>
-          <div class="dropdown-content">
-            {% if current_user.is_authenticated %}
-            <a href="/account">My account</a>
-            <a href="/logout">Log out</a>
-            {% else %}
-            <a href=" /register">I'm a new user</a>
-            <a href="/login">I have an account</a>
-            <!-- <a href="#">I'm a doctor</a> -->
-            {% endif %}
-          </div>
-        </div> 
+        <a href="/account">| My account</a>
+        <a href="/logout"> | Log out</a>
+        {% else %}
+        <a href="/login">| Login</a>
+        <a href=" /register">| Register</a>
+        {% endif %}
       </div> 
     {% block body %}{% endblock %}
 </body>

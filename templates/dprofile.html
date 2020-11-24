@@ -4,19 +4,33 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<style>
+.favorite {
+    /* color: red; */
+    background-color: plum;
+}
+</style>
 
+<p>{{doctor_name}}</p>
+{% if current_user.get_id() %}
+{% if is_favorited %}
+<form id="favorite" action="/unfavorite/{{doctor_id}}" method="POST"><button class="favorite" id="fav-button" value={{doctor_id}}>♡</button></form>
+{% else %}
+<form id="favorite" action="/favorite/{{doctor_id}}" method="POST"><button id="fav-button" value={{doctor_id}}>♡</button></form>
+{% endif %}
+{% endif %}
 
-<h3> {{doctor_name}} </h3> <button>♡</button>
-<p>Addres: {{address}}</p>
-<p>Phone number: 415-849-6862</p>
-<p>Languages: {{portuguese}} {{spanish}} </p>
-<p>Accepting new patients</p>
 
 Rating:     <span class="fa fa-star checked"></span>
             <span class="fa fa-star checked"></span>
             <span class="fa fa-star checked"></span>
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
+
+<p>Addres: {{address}}</p>
+<p>Phone number: 415-849-6862</p>
+<p>Languages: {{portuguese}} {{spanish}} </p>
+<p>Accepting new patients</p>
 
 
 <fieldset>
@@ -28,5 +42,29 @@ Rating:     <span class="fa fa-star checked"></span>
 
 
 <p><a href="/review/{{doctor_id}}">Write a review for {{doctor_name}}</a></p>
+
+<script>
+
+const favoriteForm = document.getElementById('favorite');
+const favoriteButton = document.getElementById('fav-button');
+
+favoriteForm.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+
+    fetch(favoriteForm.action, {method:'POST'}).then(response => response.json()).then(data => {
+        if (data.isFavorited) {
+            favoriteForm.action = "/unfavorite/{{doctor_id}}"
+            favoriteButton.classList.add('favorite');
+        } else {
+            favoriteForm.action = "/favorite/{{doctor_id}}"
+            favoriteButton.classList.remove('favorite');
+        }
+    })
+
+
+    
+});
+
+</script>
 
 {% endblock %}
