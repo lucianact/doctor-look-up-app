@@ -14,9 +14,13 @@
 <p>{{doctor_name}}</p>
 {% if current_user.get_id() %}
 {% if is_favorited %}
-<form id="favorite" action="/unfavorite/{{doctor_id}}" method="POST"><button class="favorite" id="fav-button" value={{doctor_id}}>♡</button></form>
+<form id="favorite" action="/unfavorite/{{doctor_id}}" method="POST">
+    <button class="favorite" id="fav-button" value={{doctor_id}}>♡</button>
+</form>
 {% else %}
-<form id="favorite" action="/favorite/{{doctor_id}}" method="POST"><button id="fav-button" value={{doctor_id}}>♡</button></form>
+<form id="favorite" action="/favorite/{{doctor_id}}" method="POST">
+    <button id="fav-button" value={{doctor_id}}>♡</button>
+</form>
 {% endif %}
 {% endif %}
 

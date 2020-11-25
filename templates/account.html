@@ -1,25 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}My Account{% endblock %}
-{% block body %}
+    {% block title %}My Account{% endblock %}
+    {% block body %}
 
-<h1> Hello {{username}} </h1>
+    <h1> Hello {{username}}</h1>
 
-<h2>Reviews you wrote:</h2>
+    <h2>Reviews you wrote:</h2>
 
-{% for review in reviews %}
-{% for doctor in doctors %}
-{% for id in ids %}
-<p>{{review}} for <a href="/doctor/{{id}}">{{doctor}}</a></p>
-{% endfor %}
-{% endfor %}
-{% endfor %}
+    {% for element in reviews_info %}
+        <p>{{element[0]}} for <a href="/doctor/{{element[3]}}">{{element[4]}}</a></p>
+    {% endfor %}
 
-<h2>Doctors you liked:</h2>
+    <h2>Doctors you liked:</h2>
 
-{% for liked_id in doctors_liked_id %}
-{% for doctor_name in doctors_liked_name %}
-<p><a href="/doctor/{{liked_id}}">{{doctor_name}}</a></p>
-{% endfor %}
-{% endfor %}
-
+    {% for liked in doctors_liked %}
+        <p>
+            <a href="/doctor/{{liked[1]}}">{{liked[2]}}</a>
+        </p>
+    {% endfor %}
 {% endblock %}

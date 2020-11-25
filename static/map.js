@@ -22,7 +22,7 @@ function showMap(url) {
             for (var doctor of doctors) {
                 var marker = new mapboxgl.Marker()
                     .setLngLat([doctor.coordinates.longitude, doctor.coordinates.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML(`<h1>${doctor.full_name}</h1><p>${doctor.address}`))
+                    .setPopup(new mapboxgl.Popup().setHTML(`<h1>${doctor.fullname}</h1><p>${doctor.address}`))
                     .addTo(map);
                 doctorMarkers.push(marker);
             }

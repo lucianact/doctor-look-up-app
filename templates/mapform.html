@@ -1,64 +1,89 @@
 {% extends 'base.html' %}
 {% block title %}Find your doctor{% endblock %}
 {% block body %}
-
-{% for message in get_flashed_messages() %}
-<p>{{ message }}</p>
-{% endfor %}
-
-<h3>Find a health care provider who speaks your language:</h3>
-
-<div id="search">
-  <form id="get-doctor" action="/" method="GET">
-  <input autocomplete="on" autofocus id="search" name="value_searched" placeholder="Name or specialty" type="text">
-  <button type="submit">Search</button>
-  </form>
-</div>
-
-<br>
-
-{% if doctors %}
-<div id="results">
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Doctors</th>
-        <th scope="col">Specialty</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for doctor in doctors %}
-      <tr>
-        <td><a href="/doctor/{{doctor['doctor_id']}}">{{ doctor['full_name'] }}</a></td>
-        <td>{{ doctor['specialty'] }}</td>
-      </tr>
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+  <div class="col-md-5 p-lg-5 mx-auto my-5"> <!-- add background photo here -->
+    <h2 class="headline"> ¿Hablas Portuñol?</h2>
+    <p class="lead font-weight-normal">You deserve to find a health provider who speaks your language: </p>
+    {% for message in get_flashed_messages() %}
+    <p class="lead font-weight-normal">{{ message }}</p>
     {% endfor %}
-    </tbody>
-  </table>
+    <div id="search">
+      <a>
+        <form id="get-doctor" action="/" method="GET" class="form-inline d-flex justify-content-center md-form form-sm active-cyan active-cyan-2 mt-2">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input type="text" placeholder="Type a specialty to start" autocomplete="on" autofocus id="search" name="value_searched" aria-label="Search" class="form-control form-control-sm ml-3 w-75">
+          <button type="submit">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="color: rgb(69, 182, 226);" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+              <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+            </svg>
+          </button>
+        </form>
+      </a>
+    </div>
+  </div>
+  {% if doctors %}
+  <div id="results">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Doctors</th>
+          <th scope="col">Specialty</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doctor in doctors %}
+        <tr>
+          <td><a href="/doctor/{{doctor['doctor_id']}}">{{ doctor['full_name'] }}</a></td>
+          <td>{{ doctor['specialty'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <section id="map"></section>
+    <script src="/static/map.js" type="application/javascript"></script>
+    <nav id="filter-group" class="filter-group"></nav>
+  </section>
+  {% endif %}
+  <footer class="container py-5">
+    <div class="row">
+      <div class="col-12 col-md">
+        <small class="d-block mb-3 text-muted">2020</small>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Features</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Cool stuff</a></li>
+          <li><a class="text-muted" href="#">Random feature</a></li>
+          <li><a class="text-muted" href="#">Team feature</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Resources</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Resource</a></li>
+          <li><a class="text-muted" href="#">Resource name</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Resources</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Business</a></li>
+          <li><a class="text-muted" href="#">Education</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>About</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="text-muted" href="#">Team</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
 </div>
-
-
-<section id="map"></section>
-  <script src="/static/map.js" type="application/javascript"></script>
-  <nav id="filter-group" class="filter-group"></nav>
-</section>
-
-<!-- <script>showMap("/search.json?value_searched={{search}}")</script> -->
 <script>
   showMap("/search.json?value_searched=" + encodeURIComponent({{ search|tojson }}));
 </script>
-{% endif %}
-
-{% endblock %}
-
-<!-- search|tojson: from python to js  -->
-<!-- showfav showMap("/favori") -->
-
-
-
-
-
-
-
-
-
+{%endblock%}
