@@ -1,52 +1,74 @@
 {% extends 'base.html' %}
 {% block title %}{{doctor_name}}{% endblock %}
 {% block body %}
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<style>
-.favorite {
-    /* color: red; */
-    background-color: plum;
-}
-</style>
-
-<p>{{doctor_name}}</p>
-{% if current_user.get_id() %}
-{% if is_favorited %}
-<form id="favorite" action="/unfavorite/{{doctor_id}}" method="POST">
-    <button class="favorite" id="fav-button" value={{doctor_id}}>♡</button>
-</form>
-{% else %}
-<form id="favorite" action="/favorite/{{doctor_id}}" method="POST">
-    <button id="fav-button" value={{doctor_id}}>♡</button>
-</form>
-{% endif %}
-{% endif %}
-
-
-Rating:     <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star"></span>
-            <span class="fa fa-star"></span>
-
-<p>Addres: {{address}}</p>
-<p>Phone number: 415-849-6862</p>
-<p>Languages: {{portuguese}} {{spanish}} </p>
-<p>Accepting new patients</p>
-
-
-<fieldset>
-    <legend>Reviews: </legend>
-{% for review in reviews %}
-<p>{{review}}</p>
-{% endfor %}
-</fieldset>
-
-
-<p><a href="/review/{{doctor_id}}">Write a review for {{doctor_name}}</a></p>
-
+<!-- header -->
+<div id="account" class="jumbotron text-left"> 
+    <!-- bookmark -->
+    <form id="favorite" action="/{%if is_favorited %}un{% endif %}favorite/{{doctor_id}}" method="POST">
+        <h1 class="logo" style="color:whitesmoke;"> {{doctor_name}}
+        {% if current_user.get_id() %}
+        <!-- <h1 style="color:darkblue;">Hi</h1> -->
+        <button class="{% if is_favorited %} favorite {% endif %} btn btn-outline-light" id="fav-button" value={{doctor_id}}>
+            <i class="fa fa-heart"></i>
+            {% endif %}
+        </button>
+    </form>
+    </h1>
+    <br>
+    <!-- info -->
+    <p class="lead" style="color: whitesmoke;">
+        <i class="fas fa-stethoscope"></i> 
+        {{specialties}}
+    </p>
+    <p class="lead" style="color: whitesmoke;">
+        <i class="fas fa-language"></i> 
+        Speaks: {{portuguese}} {{spanish}} 
+    </p>
+    <p class="lead" style="color: whitesmoke;">
+        <i class="fas fa-clipboard-check"></i> 
+        Accepting new patients
+    </p>
+    <p class="lead" style="color: whitesmoke;">
+        <i class="far fa-hospital"></i> 
+        {{address}}
+    </p>
+    <p class="lead" style="color: whitesmoke;">
+        <i class="fas fa-phone"></i>
+         415-849-6862
+    </p>
+</div>
+<!-- table reviews -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">
+                <p class="lead" style="color: gray;">
+                    {{doctor_name}} reviews
+                    <a href="/review/{{doctor_id}}" class="doctor-links">
+                        | write a review yourself!
+                    </a>
+                </p>
+            </th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if reviews %}
+        {% for review in reviews %}
+        <tr>
+            <td><p>{{review}}</p></td>
+            <td><p>by nicolas_s</p></td>  <!-- *need to improve username* -->
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td><p>{{doctor_name}} has no reviews yet. Be the first one to write one!</p></td>
+            <td><p></p></td>  
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<!-- JS -->
 <script>
 
 const favoriteForm = document.getElementById('favorite');

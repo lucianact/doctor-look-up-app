@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Login{% endblock %}
 {% block body %}
-
 {% for message in get_flashed_messages() %}
-<p>{{ message }}</p>
+<div class="alert alert-danger" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 {% endfor %}
-
+<div class="text-center">
 <div class="content-section">
-  <form method="POST" action="">
+  <form method="POST" action="" class="form-signin">
       {{ form.hidden_tag() }}
-      <fieldset class="form-group">
-          <legend class="border-bottom mb-4">Log In</legend>
-          <div class="form-group">
-              {{ form.username.label }}
+          <div class="form-group"><br><br>
               {% if form.username.errors %}
                   {{ form.username(class="is-invalid") }}
                   <div class="invalid-feedback">
@@ -21,12 +22,11 @@
                       {% endfor %}
                   </div>
               {% else %}
-                  {{ form.username }}
+              {{form.username(placeholder="Username")}}
               {% endif %}
           </div>
           <div class="form-group">
-              {{ form.password.label }}
-              {% if form.password.errors %}
+                {% if form.password.errors %}
                   {{ form.password(class="is-invalid")}}
                   <div class="invalid-feedback">
                       {% for error in form.password.errors %}
@@ -34,16 +34,15 @@
                       {% endfor %}
                   </div>
               {% else %}
-                  {{ form.password }}
+                  {{ form.password(placeholder="Password") }}
               {% endif %}
           </div>
-          <div class="form-check">
-              {{ form.remember_me }}
-              {{ form.remember_me.label }}
-          </div>
-      </fieldset>
+          <!-- <div class="form-check"> -->
+              <!-- {{ form.remember_me }} -->
+              <!-- {{ form.remember_me.label }} -->
+          <!-- </div> -->
       <div class="form-group">
-          {{ form.submit_button(class="btn btn-outline-info") }}
+          {{ form.submit_button(class="btn btn-light") }}
       </div>
       <small class="text-muted ml-2">
           <a href="#">Forgot Password?</a>
@@ -55,5 +54,5 @@
       Need An Account? <a class="ml-2" href="{{ url_for('user_registration') }}">Sign Up Now</a>
   </small>
 </div>
-
+</div>
 {% endblock %}

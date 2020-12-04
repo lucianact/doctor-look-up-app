@@ -17,6 +17,7 @@ from geocode import geo_code
 from registration import UserRegistration, UserLogIn
 import os
 
+
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
@@ -32,19 +33,27 @@ app.jinja_env.auto_reload = True
 def homepage():
     """Search health care providers by name or specialty."""
 
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
+    
+
     search = request.args.get("value_searched")
 
     if search is None or not search.strip():
-        flash("Please provide a term to search")
-        return render_template("mapform.html", doctors=[])
-
+        flash("Please provide a term to search.")
+        print(all_doctors)
+        return render_template("homepage.html", doctors=[], all_doctors=all_doctors)
+    
     # list of tuples with doctors info (related to the user's search)
     # -> name, address, longitude, latitude, id, specialties:
     doctors_info = crud.provider_search(search)
     print(doctors_info)
 
     if not doctors_info:
-        flash("We couldn't find anything related to your search")
+        flash("We couldn't find anything related to your search.")
+    
+    if doctors_info:
+        flash("Scroll down to check the search results.")
 
     # add new coordinates to the database:
     for info in doctors_info:
@@ -60,7 +69,10 @@ def homepage():
                 d.latitude = coordinates["latitude"]
                 db.session.commit()
 
-    return render_template("mapform.html", doctors=doctors_info, searrch=search)
+    return render_template("homepage.html", 
+                            doctors=doctors_info,
+                            search=search,
+                            all_doctors=all_doctors)
 
 
 @app.route("/search.json")
@@ -76,10 +88,14 @@ def search_json():
 
     doctors_info = crud.provider_search(search)
 
+
+    print(doctors_info)
+
     # The JSON object feeds the markers on the map
     return jsonify(
         [
             {
+                "id" : doctor["doctor_id"],
                 "fullname": doctor["full_name"],
                 "address": doctor["address"],
                 "coordinates": {
@@ -98,6 +114,7 @@ def get_doctors_by_specialty(doctor_specialty):
 
     # use to check the specities in the databse
     # in use in docform.html
+
 
     doctors_by_specialty = []
     if doctor_specialty == "All":
@@ -120,9 +137,12 @@ def get_doctors_by_specialty(doctor_specialty):
     )
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def user_registration():
     """User registration form."""
+
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
 
     if current_user.is_authenticated:
         return redirect(url_for("homepage"))
@@ -140,12 +160,15 @@ def user_registration():
         flash("Account succesfully created")
         return redirect(url_for("login"))
 
-    return render_template("registration.html", form=form)
+    return render_template("signup.html", form=form, all_doctors=all_doctors)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Return a form for user login."""
+
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
 
     if current_user.is_authenticated:
         return redirect(url_for("homepage"))
@@ -158,13 +181,13 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get("next")
-            flash("You're logged in!")
+            # flash("You're logged in!")
             return redirect(next_page) if next_page else redirect(url_for("homepage"))
         else:
-            flash("Oh no! Check your password and username and try again.")
+            flash("Oh no! Something went wrong! Please check your password and username.")
             return render_template("login.html", form=form)
 
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, all_doctors=all_doctors)
 
 
 # The login manager contains the code that lets the application
@@ -189,25 +212,38 @@ def logout():
 def user_account():
     """The user's account."""
 
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
+
     # user information
     username = current_user.username
     user_id = current_user.get_id()
+    print(user_id)
 
     # info about the reviews written by the user
     # (list o tuples)
     # -> content, date, username, doctor's ID, doctor's name
+    # reviews_info = crud.get_reviews_by_user(user_id)
     reviews_info = crud.reviews_info(user_id)
+    print(reviews_info)
 
     # doctors liked by the user
     # (list o tuples)
     # -> favorite object, doctor's ID, doctor's name
     doctors_liked = crud.doctors_liked_by_user(user_id)
+    print(doctors_liked)
+
+    doctor_names = []
+    for doctor in doctors_liked:
+        doctor_names.append(doctor[2])
+    # print(doctor_names)
 
     return render_template(
         "account.html",
         username=username,
         reviews_info=reviews_info,
         doctors_liked=doctors_liked,
+        all_doctors=all_doctors
     )
 
 
@@ -221,14 +257,28 @@ def add_new_doctor_form():
 
     if request.method == "POST":
 
-        # data from the form about the new doctor:
-        name = request.form.get("fullname")
+        # data from docform:
+        first_name = request.form.get("first-name")
+        last_name = request.form.get("last-name")
+        fullname = first_name + " " + last_name + "*"
+        # print(fullname)
+
         spanish = bool(request.form.get("spanish"))
         portuguese = bool(request.form.get("portuguese"))
-        address = request.form.get("address")
+
+        street_address = request.form.get("address")
+        suite = request.form.get("suite")
+        zip = request.form.get("zip")
+        address = street_address + ", " + suite + ", San Francisco, CA " + zip
+        # print(address)
         # print(request.form)
 
-        # data from the form about the doctor's specialties:
+        # test it out with geo_code function:
+        test = geo_code(address)
+        print(test)
+        
+        # bounding box
+
         form_specialties = request.form.getlist(
             "doctor-specialty"
         ) + request.form.getlist("other")
@@ -243,11 +293,11 @@ def add_new_doctor_form():
         # to get unique values:
         form_specialties = set(form_specialties)
         form_specialties = list(form_specialties)
-        print(form_specialties)
+        # print(form_specialties)
 
         # add doctor to the database:
-        if name not in all_doctors:
-            new_doctor = crud.add_new_doctor(name, spanish, portuguese, address)
+        if fullname not in all_doctors:
+            new_doctor = crud.add_new_doctor(fullname, spanish, portuguese, address)
 
         # check if specialty is in the database
         # add it to the databse if not:
@@ -258,14 +308,16 @@ def add_new_doctor_form():
             else:
                 new_specialty = crud.add_new_specialty(specialty)
                 specialty_id_list.append(new_specialty.specialty_id)
-        print(specialty_id_list)
+        # print(specialty_id_list)
 
         # add new doctor and new specialties
         # to the doctors_specialties table:
         doctor_id = new_doctor.doctor_id
         new_link = crud.set_specialties(doctor_id, specialty_id_list)
 
-    return render_template("docform.html", specialties=all_specialties)
+    return render_template("docform.html", 
+                            specialties=all_specialties,
+                            all_doctors=all_doctors)
 
 
 @app.route("/doctor/<doctor_id>", methods=["GET", "POST"])
@@ -273,13 +325,18 @@ def add_new_doctor_form():
 def doctor(doctor_id):
     """The doctor's profile."""
 
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
+
     user_id = current_user.get_id()
     doctor_id = doctor_id  # is this necessary?
     # every info about this doctor
     doctor_info = crud.get_doctor_by_id(doctor_id)
+
     # reviews written for this doctor
-    doctor_review = crud.get_doctor_reviews(doctor_id)
-    print(doctor_review)
+    doctor_reviews = crud.get_doctor_reviews(doctor_id)
+    print(doctor_reviews)
+
 
     # unpacking doctor's info:
     for info in doctor_info:
@@ -287,6 +344,12 @@ def doctor(doctor_id):
         address = info.address
         portuguese = info.portuguese
         spanish = info.spanish
+    
+    
+    specialties = crud.get_specialty_by_doctor(name)
+    specialties_string = ', '.join([str(specialty) for specialty in specialties]) 
+    print(specialties_string)
+
 
     # tranform Portuguese and Spanish boolean values
     # into strings:
@@ -310,8 +373,10 @@ def doctor(doctor_id):
         address=address,
         portuguese=portuguese,
         spanish=spanish,
-        reviews=doctor_review,
+        specialties=specialties_string,
+        reviews=doctor_reviews,
         is_favorited=is_favorited,
+        all_doctors=all_doctors,
     )
 
 
@@ -320,7 +385,14 @@ def doctor(doctor_id):
 def write_review(doctor_id):
     """Write and post a review for selected doctor"""
 
+    # feeding base.html nav bar:
+    all_doctors = crud.get_doctors()
+
     doctor_id = doctor_id
+    doctor_name = crud.get_doctor_by_id(doctor_id)
+    for name in doctor_name:
+        dname = name.full_name
+    print(dname)
     user_id = current_user.get_id()
     username = current_user.username
     review = request.form.get("review")
@@ -333,7 +405,7 @@ def write_review(doctor_id):
         flash("Thank you for submitting a review")
         return redirect(url_for("homepage"))
 
-    return render_template("review.html", id=doctor_id)
+    return render_template("review.html", id=doctor_id, doctor_name=dname, all_doctors=all_doctors)
 
 
 @app.route("/favorite/<int:doctor_id>", methods=["POST"])
@@ -358,6 +430,9 @@ def delete_favorites(doctor_id):
 
     return jsonify({"isFavorited": False})
 
+# @app.route("#")
+# def to_be_improved():
+#     return flash("Sorry about that")
 
 if __name__ == "__main__":
     connect_to_db(app)

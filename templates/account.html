@@ -1,20 +1,58 @@
 {% extends 'base.html' %}
-    {% block title %}My Account{% endblock %}
-    {% block body %}
-
-    <h1> Hello {{username}}</h1>
-
-    <h2>Reviews you wrote:</h2>
-
-    {% for element in reviews_info %}
-        <p>{{element[0]}} for <a href="/doctor/{{element[3]}}">{{element[4]}}</a></p>
-    {% endfor %}
-
-    <h2>Doctors you liked:</h2>
-
-    {% for liked in doctors_liked %}
-        <p>
-            <a href="/doctor/{{liked[1]}}">{{liked[2]}}</a>
-        </p>
-    {% endfor %}
+{% block title %}My Account{% endblock %}
+{% block body %}
+<!-- header -->
+<div id="account" class="jumbotron text-left">
+    <h1 class="logo" style="color: whitesmoke">Welcome, {{username}}!</h1>
+    <p class="lead" style="color: whitesmoke;">
+        Here you can check out the doctors you have saved and reviews you've written
+    </p>    
+</div>
+<!-- table reviews -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">
+                <p class="lead" style="color: gray;">Reviews you've written</p>
+            </th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for element in reviews_info %}
+        <tr>
+            <td>
+                <a href="/doctor/{{element[3]}}" class="doctor-links">{{element[4]}}</a>
+            </td>
+            <td>{{element[0]}}</td>
+            <td>
+                <a href="#" class="doctor-links">edit</a> |
+                <a href="#" class="doctor-links">delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- table bookmarks -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">
+                <p class="lead" style="color: gray;">Doctors you've bookmarked</p>
+            </th>
+            <!-- <th scope="col"></th> -->
+            <!-- <th scope="col"></th> -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for liked in doctors_liked %}
+        <tr>
+            <td><a href="/doctor/{{liked[1]}}" class="doctor-links">{{liked[2]}}</a></td>
+            <!-- <td></td> -->
+            <!-- <td><a href="">delete</a></td> -->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

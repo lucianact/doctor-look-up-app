@@ -5,9 +5,6 @@ from model import User
 from crud import check_username, check_email
 
 
-DUPLICATE_USER_ERROR = "That username is alredy taken"
-DUPLICATE_EMAIL_ERROR = "That email is alredy taken"
-
 class UserRegistration(FlaskForm):
     username = StringField(
         "Username", validators=[DataRequired(), Length(min=8, max=20)]
@@ -27,14 +24,14 @@ class UserRegistration(FlaskForm):
         username = username.data
         user = check_username(username)
         if user:
-            raise ValidationError(DUPLICATE_USER_ERROR)
+            raise ValidationError("That username is alredy taken")
 
     def validate_email(self, email):
 
         email = email.data
         user = check_email(email)
         if user:
-            raise ValidationError(DUPLICATE_EMAIL_ERROR)
+            raise ValidationError("That email is alredy taken")
 
 
 class UserLogIn(FlaskForm):

@@ -153,7 +153,7 @@ def reviews_info(user_id):
         )
         .join(Doctor)
         .join(User, User.user_id == Review.user_id)
-        .filter(Review.user_id == User.user_id)
+        .filter(Review.user_id == user_id)
         .all()
     )
 
@@ -194,7 +194,7 @@ def doctors_liked_by_user(user_id):
         db.session.query(Favorite, Doctor.doctor_id, Doctor.full_name)
         .join(Doctor)
         .join(User, User.user_id == Favorite.user_id)
-        .filter(Favorite.user_id == User.user_id)
+        .filter(Favorite.user_id == user_id)
         .all()
     )
 
@@ -215,7 +215,7 @@ def provider_search(search):
     ).fetchall()
 
     return doctors
-
+    
 
 if __name__ == "__main__":
     from server import app

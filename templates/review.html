@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Add a review{% endblock %}
+{% block title %}Write a review{% endblock %}
 {% block body %}
-
 {% for message in get_flashed_messages() %}
-<p>{{ message }}</p>
+<div class="alert alert-warning" role="alert">
+  {{ message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 {% endfor %}
-
-<br>
-
-<h1>Write a review:</h1>
-
-<form action="/review/{{id}}" method="POST">
-<label for="doctors-review">Review:</label>
-<textarea id="review" name="review" rows="4" cols="50"></textarea>
-<input type="submit" value="Submit">
-<br>
-<div class="rating">
+<div class="jumbotron form-group">
+    <h2 class="lead" style="color:whitesmoke;">Write a review for {{doctor_name}}</h2>
+    <form action="/review/{{id}}" method="POST">
+    <textarea id="review" name="review" class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+    <input class="btn btn-light my-2 text-left" type="submit" value="Submit">
+    </form>
+</div>
+<!-- <div class="rating">
     <label for="review-ating">Rating</label>
     <select name="rating" id="rating">
         <option value="1">1</option>
@@ -23,10 +24,5 @@
         <option value="3">3</option>
         <option value="4">4</option>
         <option value="5">5</option>
-    </select>
-</div>
-</form>
-
-
-
+    </select> -->
 {% endblock %}

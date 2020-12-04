@@ -1,13 +1,12 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoibHVjaWFuYWN0IiwiYSI6ImNrZnB1NzJzZjAyaTAyc213bzQzaW5xM2IifQ.g-6i_62u4jlDiZbf_kP7ew';
 var map = new mapboxgl.Map({
 container: 'map', // container id
-style: 'mapbox://styles/mapbox/streets-v11', // style URL
+style: 'mapbox://styles/lucianact/cki6fdpej73tw19p51oijfmwk', // style URL
 center: [-122.446, 37.7653], // starting position [lng, lat]
 zoom: 11 // starting zoom
 });
-
+// maps markers:
 const doctorMarkers = [];
-
 function showMap(url) {
 
     fetch(
@@ -16,17 +15,17 @@ function showMap(url) {
         response => response.json()
     ).then(
         doctors => {
-            for (var marker of doctorMarkers) {
+            for (let marker of doctorMarkers) {
                 marker.remove()
             }
-            for (var doctor of doctors) {
-                var marker = new mapboxgl.Marker()
+            for (let doctor of doctors) {
+                let marker = new mapboxgl.Marker()
                     .setLngLat([doctor.coordinates.longitude, doctor.coordinates.latitude])
-                    .setPopup(new mapboxgl.Popup().setHTML(`<h1>${doctor.fullname}</h1><p>${doctor.address}`))
+                    .setPopup(new mapboxgl.Popup().setHTML(`<h5><a href="/doctor/${doctor.id}" class="doctor-links">${doctor.fullname}</a></h5><p><a href="https://www.google.com/maps/place/${doctor.address}" class="doctor-links">${doctor.address}</a><br>(click for directions)</p>`))
                     .addTo(map);
                 doctorMarkers.push(marker);
             }
         }
     );
 }
-// marker.togglePopup(); 
+marker.togglePopup(); 

@@ -1,58 +1,112 @@
 {% extends 'base.html' %}
 {% block title %}Add a new doctor{% endblock %}
 {% block body %}
-
-<div id='html' style="display: none">
-
-  <select id="get-doctor-specialty" name="doctor-specialty" required>
-
-    <option value="" disabled selected>Select specialty</option>
-    <option value="Other">Other</option>
-    {% for specialty in specialties %}
-    <option value="{{specialty.specialty}}">{{specialty.specialty}}</option>
-    {% endfor %}
-
-  </select>
-
-  <button id="button" onclick="addSpecialtySection()">+</button>
-
-  <div id="other" style="display: none">
-    <p>Other:<input type="text" name="other"></p>
-  </div>
-
+<!-- success message -->
+<div id="thank-you" class="alert alert-info" role="alert" style="display: none">
+  <h4 class="alert-heading">Thank you!</h4>
+  <p>Your contribution means a lot to our community!</p>
+  <hr>
+  <p class="mb-0"> 
+    The information provided will be marked with "*" until it has been verified. 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </p>
 </div>
-
-<form action="/doctorform" method="POST">
-
-  <fieldset>
-
-    <legend>Add a doctor to our database:</legend>
-
-    <section id="doctor-name">
-      Name: <input type="text" name="fullname" required><br>
-      <small>Please write doctor's full name. </small>
-    </section>
-
-    <div id="js"><p>Is the doctor's specialty in our database?</p></div><br>
-
-    <section id="doctor-language">
-      Languages spoken: <br>
-      Spanish <input name='spanish' type='checkbox' value='TRUE'/><br>
-      Portuguese <input name='portuguese' type='checkbox' value='TRUE'/>
-    </section>
-
-    <section id="doctor-address">
-      <p>Address: <input type="text" name="address" required><br>
-        <small>Please follow example: 929 Clay St, Suite 501, San Francisco, CA 94108.</small></p>
-    </section>
-
-      <input type="submit">
-
-  </fieldset>
-
-</form>
-
-
+<!-- JS Specialty Select Form -->
+  <!-- <div class="input-group mb-3"> -->
+    <div id='html' style="display: none">
+      <!-- <div class="input-group-append">
+        <button class="" id="button" onclick="addSpecialtySection()">+</button>
+      </div> -->
+      <label for="FormSelect">Doctor's specialty</label>
+      <select id="get-doctor-specialty" name="doctor-specialty" class="form-control" required>
+        <option value="" disabled selected>Select at least one specialty</option>
+        <option value="Other">Other</option>
+        {% for specialty in specialties %}
+        <option value="{{specialty.specialty}}">{{specialty.specialty}}</option>
+        {% endfor %}
+      </select>
+      <div class="form-row" style="display: none">
+        <div class="form-group col-md-4">
+          <div id="other">
+            <p>Other:<input type="text" name="other" class="form-control"></p>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-light" id="button" onclick="addSpecialtySection()">+</button>
+    </div>
+    <!-- UI form  -->
+    <div class="content">
+      <div class="border-top pt-3">
+        <div class="container">
+          <br>
+          <form action="/doctorform" method="POST">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="inputFirstName">Doctor's First Name</label>
+                <input name="first-name" type="text" class="form-control" id="inputFirstName" placeholder="" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputLastName">Doctor's Last Name</label>
+                <input name="last-name" type="text" class="form-control" id="inputLastName" placeholder="" required>
+              </div>
+            </div>
+            <!-- Doctor Specialy -->
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <div id="js"></div>
+                <div id="other"></div>
+              </div>
+            </div>
+            <!-- Doctor "OTHER" Specialy -->
+            <div id="other"></div>
+            <!-- Doctor Address -->
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="inputAddress">Doctor's Address</label>
+                <input name="address" type="text" class="form-control" id="inputAddress" placeholder="1234 Main St." required>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputOptionalAddress">Additional information</label>
+                <input name="suite" type="text" class="form-control" id="inputOptionalAddress" placeholder="Building, floor, apartment number">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-2">
+                <label for="inputCity">City</label>
+                <input name="city" type="text" class="form-control" id="inputCity" placeholder="San Francisco" disabled>
+              </div>
+              <div class="form-group col-md-1">
+                <label for="inputState">State</label>
+                <select id="inputState" class="form-control">
+                  <option selected disabled>CA</option>
+                </select>
+              </div>
+              <div class="form-group col-md-1">
+                <label for="inputZip">Zip</label>
+                <input name="zip" type="text" class="form-control" id="inputZip" required>
+              </div>
+            </div>
+            <!-- Doctor Language -->
+            <div class="form-check form-check-inline">
+              <p> 
+                Doctor's Language(s)  
+                <input name="portuguese" class="form-check-input" type="checkbox" id="inlineCheckbox1" value="True">
+                <label class="form-check-label" for="inlineCheckbox1"> Portuguese</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input name="spanish" class="form-check-input" type="checkbox" id="inlineCheckbox2" value="True">
+                <label class="form-check-label" for="inlineCheckbox2">Spanish</label>
+              </div>
+            </p>
+            <!-- Submmit Button -->
+            <button type="submit" class="btn btn-light" onclick="thankYou()">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+<!-- JS -->
 <script> 
 
   function addSpecialtySection () {
@@ -66,10 +120,11 @@
     specialtySection.innerHTML = template.innerHTML;
     div.appendChild(specialtySection);
 
-    let specialtyInput = specialtySection.childNodes[1];
-    let other = specialtySection.childNodes[5];
-
+    let specialtyInput = specialtySection.childNodes[5];
+    let other = specialtySection.childNodes[7];
+    
     specialtyInput.addEventListener ("change", function() {
+      console.log('hi')
       if (specialtyInput.value == "Other") {
         other.style.display = "block";
       } else {
@@ -79,5 +134,14 @@
   }
 
   addSpecialtySection(); 
+
+function thankYou () {
+
+  let div = document.getElementById("thank-you");
+  div.style.display = "";
+}
+
+// thankYou();
 </script>
+
 {% endblock %}

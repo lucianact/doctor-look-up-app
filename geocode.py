@@ -29,3 +29,9 @@ def geo_code(address):
     final_coordinates = {"longitude": coordinates[0], "latitude": coordinates[1]}
 
     return final_coordinates
+
+    # take a look at how mapbox reacts to random words 
+
+    
+print(geo_code("10987654345678, fdfdfdfdfdf, San Francisco, CA 0987654"))
+print(geo_code("hi"))

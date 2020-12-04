@@ -21,7 +21,7 @@ class Doctor(db.Model):
     latitude = db.Column(db.String(80))
 
     def __repr__(self):
-        return f"Doctor name: {self.full_name}."
+        return f"{self.full_name}"
 
 
 class Specialty(db.Model):
@@ -33,7 +33,7 @@ class Specialty(db.Model):
     specialty = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
-        return f"Specialty : {self.specialty}."
+        return f"{self.specialty}"
 
 
 class DoctorSpecialty(db.Model):
@@ -103,7 +103,7 @@ class Favorite(db.Model):
     )
 
 
-def connect_to_db(flask_app, db_uri="postgresql:///medical", echo=True):
+def connect_to_db(flask_app, db_uri="postgresql:///medical", echo=False):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     flask_app.config["SQLALCHEMY_ECHO"] = echo
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
