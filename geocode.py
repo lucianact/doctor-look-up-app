@@ -1,8 +1,8 @@
+"""Geocode API - address to coordinates."""
+
 import requests
 from urllib.parse import quote
 from pprint import pprint
-
-# request_test = {}
 
 
 def geo_code(address):
@@ -14,24 +14,18 @@ def geo_code(address):
     }
 
     base_url = "https://api.mapbox.com/geocoding/v5/mapbox.places/"
-
     full_url = base_url + quote(address) + ".json"
 
-    # global request_test
-    request_test = requests.get(full_url, params=params).json()
+    request = requests.get(full_url, params=params).json()
+    # pprint(request)
 
-    this_is_list = request_test["features"]
-    new_dict = this_is_list[0]
-    coordinates = new_dict["center"]  # list
+    list_features = request["features"]
+    # print(list_of_features)
+    dict_features = list_features[0]
+    # print(dict_features)
+    list_coordinates = dict_features["center"]  
+    # print(list_coordinates)
 
-    # pprint(request_test.json())
+    coordinates = {"longitude": list_coordinates[0], "latitude": list_coordinates[1]}
 
-    final_coordinates = {"longitude": coordinates[0], "latitude": coordinates[1]}
-
-    return final_coordinates
-
-    # take a look at how mapbox reacts to random words 
-
-    
-print(geo_code("10987654345678, fdfdfdfdfdf, San Francisco, CA 0987654"))
-print(geo_code("hi"))
+    return coordinates

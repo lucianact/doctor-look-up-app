@@ -13,7 +13,7 @@ from geocode import geo_code
 
 
 def get_all_doctors_and_specialties():
-    """Return all doctors and all specialties from database"""
+    """Return all doctors and all specialties from database."""
 
     result = []
 
@@ -30,7 +30,8 @@ def get_all_doctors_and_specialties():
 
 
 def get_doctors_by_specialty(user_input):
-    """Return all the doctors of a specific specialty"""
+    """Return all doctors by specific specialty."""
+
     return (
         Doctor.query.join(DoctorSpecialty)
         .join(Specialty)
@@ -40,7 +41,8 @@ def get_doctors_by_specialty(user_input):
 
 
 def get_specialty_by_doctor(user_input):
-    """Return all the specialties of  a specific doctor"""
+    """Return all specialties from specific doctor."""
+
     return (
         Specialty.query.join(DoctorSpecialty)
         .join(Doctor)
@@ -60,15 +62,21 @@ def get_doctors():
 
 
 def get_doctor_by_id(doctor_id):
-    """Return doctor by its ID."""
+    """Return doctors by their ID."""
     return Doctor.query.filter(Doctor.doctor_id == doctor_id).all()
 
 
 def create_user(username, email, password):
     """Create and return a new user."""
-    user = User(username=username, email=email, password=password)
+
+    user = User(username=username, 
+                email=email, 
+                password=password
+                )
+
     db.session.add(user)
     db.session.commit()
+
     return user
 
 
@@ -78,30 +86,35 @@ def check_username(username):
 
 
 def check_email(email):
-    """Check if user e-mail already exists in the database."""
+    """Check if e-mail already exists in the database."""
     return User.query.filter(User.email == email).first()
 
 
 def add_new_doctor(full_name, spanish, portuguese, address):
     """Add a new doctor to the database."""
+
     new_doctor = Doctor(
         full_name=full_name, spanish=spanish, portuguese=portuguese, address=address
     )
+
     db.session.add(new_doctor)
     db.session.commit()
+
     return new_doctor
 
 
 def add_new_specialty(specialty):
     """Add a new specialty to the database."""
+
     new_specialty = Specialty(specialty=specialty)
     db.session.add(new_specialty)
     db.session.commit()
+
     return new_specialty
 
 
 def set_specialties(doctor_id, specialty_ids):
-    """Conect doctors with their specialties"""
+    """Connect doctors with to specialties."""
 
     new_links = []
 
@@ -137,11 +150,12 @@ def get_doctor_reviews(doctor_id):
 
 
 def get_reviews_by_user(user_id):
-    """Get reviews written by user."""
+    """Get revie user ID."""
     return Review.query.filter(Review.user_id == user_id).all()
 
 
 def reviews_info(user_id):
+    """Return reviews info."""
 
     info = (
         db.session.query(
@@ -161,7 +175,7 @@ def reviews_info(user_id):
 
 
 def add_favorite(user_id, doctor_id):
-    """Add doctor to favorites table"""
+    """Add doctor to favorites table."""
 
     favorite = Favorite(user_id=user_id, doctor_id=doctor_id)
     db.session.add(favorite)
@@ -169,7 +183,7 @@ def add_favorite(user_id, doctor_id):
 
 
 def delete_favorite(user_id, doctor_id):
-    """Delete doctor from favorites table"""
+    """Delete doctor from favorites table."""
 
     favorites = Favorite.query.filter(
         Favorite.user_id == user_id, Favorite.doctor_id == doctor_id
@@ -177,18 +191,22 @@ def delete_favorite(user_id, doctor_id):
 
     for fav in favorites:
         db.session.delete(fav)
+
     db.session.commit()
 
 
 def is_favorited(user_id, doctor_id):
-    var = Favorite.query.filter(
+    """Check favorited doctors."""
+
+    favorited = Favorite.query.filter(
         Favorite.user_id == user_id, Favorite.doctor_id == doctor_id
     ).count()
-    print("isFavorited", user_id, doctor_id, var)
-    return var
+  
+    return favorited
 
 
 def doctors_liked_by_user(user_id):
+    """Return doctors liked by user ID."""
     
     doctors = (
         db.session.query(Favorite, Doctor.doctor_id, Doctor.full_name)
@@ -202,6 +220,7 @@ def doctors_liked_by_user(user_id):
 
 
 def provider_search(search):
+    """Search for doctors and specialties from the database."""
 
     doctors = db.session.execute(
         """
@@ -219,5 +238,4 @@ def provider_search(search):
 
 if __name__ == "__main__":
     from server import app
-
     connect_to_db(app)

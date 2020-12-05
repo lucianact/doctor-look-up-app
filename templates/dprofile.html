@@ -57,7 +57,7 @@
         {% for review in reviews %}
         <tr>
             <td><p>{{review}}</p></td>
-            <td><p>by nicolas_s</p></td>  <!-- *need to improve username* -->
+            <td><p>reviews are anonymous</p></td> 
         </tr>
         {% endfor %}
         {% else %}
@@ -70,7 +70,6 @@
 </table>
 <!-- JS -->
 <script>
-
 const favoriteForm = document.getElementById('favorite');
 const favoriteButton = document.getElementById('fav-button');
 
@@ -86,11 +85,6 @@ favoriteForm.addEventListener('submit', function (ev) {
             favoriteButton.classList.remove('favorite');
         }
     })
-
-
-    
 });
-
 </script>
-
 {% endblock %}

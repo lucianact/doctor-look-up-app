@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}My Account{% endblock %}
 {% block body %}
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
 <!-- header -->
 <div id="account" class="jumbotron text-left">
     <h1 class="logo" style="color: whitesmoke">Welcome, {{username}}!</h1>

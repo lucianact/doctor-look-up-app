@@ -7,31 +7,20 @@ html {
   font-family: 'Bitter', serif;
 }
 
-  #dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-  }
-  
-  .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-  }
-  
-  .dropdown-content a:hover {background-color: #ddd;}
-  
-  .dropdown:hover .dropdown-content {display: block;}
-  
-  .dropdown:hover .dropbtn {background-color: #3e8e41;}
+.scrollable-menu {
+  height: auto;
+  max-height: 155px;
+  overflow-x: hidden;
+  background-color: white;
+  max-width: 205px;
+}
 
+.scrollable-results {
+  height: auto;
+  max-height: 60vh;
+  overflow-x: hidden;
 
-
-
+}
 
 .doctor-links:link {
   color: darkblue;
@@ -49,24 +38,33 @@ html {
   background-color: yellow;
   text-decoration: underline;
 }
-#map { 
-    /* position: absolute;  */
-    /* width: 50%; */
-    height: 60vh; 
-    margin: center;
-    padding: 0;
+
+.image {
+  background-image: url('medical-5459630.svg');
+  background-repeat: no-repeat;
+  background-position: right;
+  text-align: right;
+  text-decoration-color: rgb(42, 120, 165);
+
 }
+
 .active-cyan-4 input[type=text] {
-    border: 3px solid rgb(72, 121, 212);
+  border: 3px solid rgb(72, 121, 212);
 }
 
 .active-cyan input[type=text] {
-    border-bottom: 1px solid rgb(72, 121, 212);
-    box-shadow: 0 1px 0 0 rgb(72, 121, 212);
+  border-bottom: 1px solid rgb(72, 121, 212);
+  box-shadow: 0 1px 0 0 rgb(72, 121, 212);
 }
 
 .active-cyan .fa, .active-cyan-4 .fa {
-    color: rgb(72, 121, 212);
+  color: rgb(72, 121, 212);
+}
+
+#map { 
+    height: 60vh; 
+    margin: center;
+    padding: 0;
 }
 
 .float-container {
@@ -89,27 +87,15 @@ html {
     padding-bottom: 20px;
 }
   
-.image {
-    background-image: url('medical-5459630.svg');
-    background-repeat: no-repeat;
-    background-position: right;
-    text-align: right;
-    text-decoration-color: rgb(42, 120, 165);
-
-}
 
 #account{
     text-align: center;
     background-image: linear-gradient(to right, rgba(72, 121, 212, 0.712) , white);
-    /* background-color: rgb(42, 120, 165); */
-    /* background-color: mediumturquoise; */
 }
 
-#review {
-    background-image: linear-gradient(to right, white , white);
-  
+.favorite {
+  background-color: hotpink;
 }
-
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
     padding: 8px;
@@ -118,46 +104,7 @@ html {
     border-top: 1px solid rgba(221, 221, 221, 0)!important;
 }
 
-/* docform */
-
-#sidebar {
-    width: 200px;
-    margin-right: 40px;
-    position: absolute;
-    flex-wrap: nowrap wrap wrap-reverse;
-    top: 0;
-    right: 0;
-    padding: 0;
-    text-align: left;
-    border: 1px solid gray;
-    padding-bottom: 4em;
-    padding-top: none;
-  }
-  
-  .content {
-    position: relative;
-  }
-/* 
-  favorite */
-.favorite {
-    background-color: hotpink;
-}
-
-.scrollable-menu {
-    height: auto;
-    max-height: 155px;
-    overflow-x: hidden;
-    background-color: white;
-    max-width: 205px;
-}
-
-.scrollable-results {
-    height: auto;
-    max-height: 60vh;
-    overflow-x: hidden;
-
-}
-
 .jumbotron{
   background-color:  rgba(72, 121, 212, 0.468);
 }
+

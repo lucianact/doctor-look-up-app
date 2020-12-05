@@ -1,5 +1,3 @@
-"""Models for doctor search app."""
-
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
@@ -8,8 +6,7 @@ db = SQLAlchemy()
 
 
 class Doctor(db.Model):
-    """A doctor."""
-
+  
     __tablename__ = "doctors"
 
     doctor_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -25,7 +22,6 @@ class Doctor(db.Model):
 
 
 class Specialty(db.Model):
-    """A specialty."""
 
     __tablename__ = "specialties"
 
@@ -37,7 +33,6 @@ class Specialty(db.Model):
 
 
 class DoctorSpecialty(db.Model):
-    """The doctor's specialty."""
 
     __tablename__ = "doctors_specialties"
 
@@ -52,11 +47,10 @@ class DoctorSpecialty(db.Model):
     specialty = db.relationship("Specialty", backref="doctors_specialties")
 
     def __repr__(self):
-        return f"Doctor ID: {self.doctor.full_name}, specialty ID: {self.specialty.specialty}."
+        return f"{self.doctor.full_name}, {self.specialty.specialty}."
 
 
 class User(db.Model, UserMixin):
-    """A user."""
 
     __tablename__ = "users"
 
@@ -67,8 +61,6 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.user_id)
-
-    # review = db.relationship('Review', backref='users')
 
     def __repr__(self):
         return f"User: {self.username}, email:{self.email}"
@@ -116,9 +108,4 @@ def connect_to_db(flask_app, db_uri="postgresql:///medical", echo=False):
 
 if __name__ == "__main__":
     from server import app
-
-    # Call connect_to_db(app, echo=False) if your program output gets
-    # too annoying; this will tell SQLAlchemy not to print out every
-    # query it executes.
-
     connect_to_db(app)
