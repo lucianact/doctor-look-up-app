@@ -208,7 +208,7 @@ def user_account():
     user_id = current_user.get_id()
 
     # list of tuples
-    # (content, date, username, doctor's ID, doctor's name)
+    # (content, username, doctor's ID, doctor's name)
     reviews_info = crud.reviews_info(user_id)
 
     # list o tuples
@@ -363,12 +363,11 @@ def write_review(doctor_id):
     user_id = current_user.get_id()
     username = current_user.username
     review = request.form.get("review")
-    rating = request.form.get("rating")
 
     if review is None or not review.strip():
         flash("You must provide valid text.")
     else:
-        review = crud.add_review(user_id, doctor_id, review, rating)
+        review = crud.add_review(user_id, doctor_id, review)
         flash("Thank you for submitting a review.")
         return redirect(url_for("user_account"))
 

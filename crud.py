@@ -128,14 +128,13 @@ def set_specialties(doctor_id, specialty_ids):
     return new_links
 
 
-def add_review(user_id, doctor_id, review_content, rating):
+def add_review(user_id, doctor_id, review_content):
     """Add review to the database."""
 
     review = Review(
         user_id=user_id,
         doctor_id=doctor_id,
-        review_content=review_content,
-        rating=rating,
+        review_content=review_content
     )
 
     db.session.add(review)
@@ -160,7 +159,6 @@ def reviews_info(user_id):
     info = (
         db.session.query(
             Review,
-            Review.date_posted,
             User.username,
             Doctor.doctor_id,
             Doctor.full_name,

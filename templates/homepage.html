@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Find your doctor{% endblock %}
+{% block body %}
+<!-- homepage headline -->
+<div class="image">
+  <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3">
+    <div class="col-md-5 p-lg-5 my-2">
+      <!-- search div -->
+      <div class="text-center">
+        <p class="lead text-center text-muted">
+          {% if current_user.is_authenticated %}
+          Hello, {{current_user.username}}!
+          <br>
+          {% endif %}
+          You deserve a health provider who speaks your language: 
+        </p>
+        <div id="search">
+          <form id="get-doctor" action="/" method="GET" class="form-inline active-cyan-4">
+            <input type="text" placeholder="Type a specialty to start" autocomplete="on" name="value_searched" class="form-control form-control-sm ml-3 w-75">
+            <button class="btn btn-light"><a href="#results">
+              <i style="color:rgb(72, 121, 212)" class="fas fa-search" aria-hidden="true"></i>
+              </a>
+            </button>
+          </form>
+        </div>
+      </div>
+      <!-- personal information footer -->
+      <div class="text-center">
+        <footer class="container py-5">
+          <div class="row">
+            <div class="col-6 col-md">
+              <a class="text-muted" href="https://github.com/lucianact">
+                <i class="fab fa-github" style="font-size:24px;color:rgb(72, 121, 212)"></i>
+              </a>
+            </div>
+            <div class="col-6 col-md">
+              <a class="text-muted" href="https://www.linkedin.com/in/lucianact/">
+                <i class="fab fa-linkedin" style="font-size:24px;color:rgb(72, 121, 212)"></i>
+              </a>
+            </div>
+            <div class="col-6 col-md">
+              <a class="text-muted" href="mailto:luciana.cterrazas@gmail.com">
+                <i class="fa fa-envelope" style="font-size:24px;color:rgb(72, 121, 212)"></i>
+              </a>
+            </div>
+            <div class="col-6 col-md">
+              <a class="text-muted" href="tel:4158496862">
+                <i class="fa fa-phone" style="font-size:24px;color:rgb(72, 121, 212)"></i>
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- alert messages -->
+{% for message in get_flashed_messages() %}
+<div class="alert alert-info" role="alert">
+  {{ message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+<!-- results div -->
+{% if doctors %}
+<div id="results" class="float-container">
+  <p style="color: gray;">You searched for "{{search}}"</p>
+  <hr>
+  <div class="float-child doctors-column">
+    <div id="results" class="scrollable-results">
+      {% for doctor in doctors %}
+      <p>
+        <i class="fa fa-user-md" style="font-size:24px;color:darkblue"></i>
+        <a href="/doctor/{{doctor['doctor_id']}}" class="doctor-links">
+          {{ doctor['full_name'] }} 
+        </a>
+        <br>
+        {{ doctor['specialty'] }}
+      </p>
+      {% endfor %}
+    </div>
+  </div>
+  <!-- map results div -->
+  <div class="float-child map-column">
+    <div id="map" class="container py-5">
+      <script src="/static/map.js" type="application/javascript"></script>
+      <nav id="filter-group" class="filter-group"></nav>
+    </div>
+  </div>
+</div>
+{% endif %}
+<!-- map.js -->
+<script>
+  showMap("/search.json?value_searched=".concat({{ search|default("")|tojson }}))
+</script>
+{%endblock%}

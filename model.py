@@ -76,9 +76,7 @@ class Review(db.Model):
     doctor_id = db.Column(
         db.Integer, db.ForeignKey("doctors.doctor_id"), nullable=False
     )
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     review_content = db.Column(db.Text, nullable=False)
-    rating = db.Column(db.Integer)
 
     def __repr__(self):
         return f"{self.review_content}"

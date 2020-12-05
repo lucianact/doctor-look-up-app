@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Registration{% endblock %}
+{% block body %}
+{% for message in get_flashed_messages() %}
+<p>{{ message }}</p>
+{% endfor %}
+<div class="text-center">
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+            <div class="form-group"><br><br>
+                <h2 class="lead mb-3 font-weight-normal tex">It's easy to join</h2>
+                {% if form.username.errors %}
+                    {{ form.username(class="is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                {{form.username(placeholder="Username")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {% if form.email.errors %}
+                    {{ form.email(class="is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email(placeholder="E-mail") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {% if form.password.errors %}
+                    {{ form.password(class="is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.password(placeholder="Password")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {% if form.password_confirmation.errors %}
+                    {{ form.password_confirmation(class="is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password_confirmation.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.password_confirmation(placeholder="Confirm password") }}
+                {% endif %}
+            </div>
+        <div class="form-group">
+            {{ form.submit_button(class="btn btn-light") }}
+        </div>
+    </form>
+</div>
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Already Have An Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
+    </small>
+</div>
+</div>
+{% endblock %}
