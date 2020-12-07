@@ -1,5 +1,12 @@
-from flask import Flask, jsonify, render_template, request, flash, redirect, url_for
-from flask_bcrypt import Bcrypt
+from flask import (
+    Flask, jsonify, 
+    render_template, 
+    request, 
+    flash, 
+    redirect, 
+    url_for,
+    abort,
+)
 from flask_login import (
     LoginManager,
     login_user,
@@ -7,6 +14,7 @@ from flask_login import (
     logout_user,
     login_required,
 )
+from flask_bcrypt import Bcrypt
 from model import connect_to_db, User, db, Review, Doctor
 import crud
 from jinja2 import StrictUndefined
@@ -415,6 +423,20 @@ def about_me_and_project():
 def page_not_found(e):
     # note that we set the 404 status explicitly
     return render_template('404.html'), 404
+
+#Returning API errors as JSON
+# @app.errorhandler(404)
+# def resource_not_found(e):
+#     return jsonify(error=str(e)), 404
+
+# @app.route("/error")
+# def get_one_error():
+#     resource = get_resource()
+
+#     if resource is None:
+#         abort(404, description="Resource not found")
+
+#     return jsonify(resource)
 
 
 if __name__ == "__main__":
