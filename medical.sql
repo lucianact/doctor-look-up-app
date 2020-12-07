@@ -404,7 +404,6 @@ COPY public.favorites (favorite_id, user_id, doctor_id) FROM stdin;
 128	2	4
 135	6	4
 28	2	41
-149	2	36
 \.
 
 
@@ -415,8 +414,6 @@ COPY public.favorites (favorite_id, user_id, doctor_id) FROM stdin;
 COPY public.reviews (review_id, user_id, doctor_id, review_content) FROM stdin;
 5	2	4	Wonderful surgeon! Highly recommend!
 6	2	40	Very professional! 
-7	2	41	Amazing doctor! 
-19	2	36	I had a great experience with Dr. Joanne! 
 \.
 
 
@@ -447,20 +444,6 @@ COPY public.specialties (specialty_id, specialty) FROM stdin;
 20	Refractive Surgeon
 21	Shoulder Surgeon
 22	Sports Medicine Specialist
-23	Anesthesiologist 
-24	Anesthesiologist 
-25	Test
-26	test1
-27	test2
-28	Chiropractor
-29	Chiropractor
-30	Chiropractor
-31	Cosmetic Dentist
-32	Chiropractor
-33	test
-34	Cosmetic Dentist
-35	Chiropractor
-36	Chiropractor
 \.
 
 
@@ -485,7 +468,7 @@ SELECT pg_catalog.setval('public.doctors_doctor_id_seq', 64, true);
 -- Name: favorites_favorite_id_seq; Type: SEQUENCE SET; Schema: public; Owner: vagrant
 --
 
-SELECT pg_catalog.setval('public.favorites_favorite_id_seq', 149, true);
+SELECT pg_catalog.setval('public.favorites_favorite_id_seq', 158, true);
 
 
 --

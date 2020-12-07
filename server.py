@@ -21,7 +21,7 @@ from jinja2 import StrictUndefined
 import random
 from geocode import geo_code
 from registration import UserRegistration, UserLogIn
-import os
+from secrets import SECRET_KEY
 
 
 app = Flask(__name__)
@@ -30,7 +30,6 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 
-SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY
 app.jinja_env.undefined = StrictUndefined
 app.jinja_env.auto_reload = True
