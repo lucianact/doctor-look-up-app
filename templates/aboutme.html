@@ -38,35 +38,10 @@
         So I built <em class="logo">¿Hablas Portuñol?</em> - a Python web application 
         that allows users to locate Spanish and Portuguese-speaking health providers in San Francisco.
         They can also write reviews, bookmark doctors and contribute to my open source data feature.
-    </p>
-    <h3 class="logo">
-        A quick overview of the process
-    </h3>
-    <p style="text-align: justify" class="lead">
-        I’m using PostgreSQL to store and manage all the data I gathered. 
-        Designing a database schema and then building effective queries was one of 
-        the biggest challenges of this project because when a user searches for a doctor
-        or for a specialty, the server needs to check data from three
-        different tables in the database before returning the search results.
-        <br>
-        To facilitate the communication between my Python application and the database, 
-        I’m using SQLAlchemy and then JavaScript to send network requests to the server, 
-        to load the map and its geolocation markers related to the search results. 
-        I’m also using JavaScript to create event listeners that add dynamic functionality 
-        to my front-end - such as the bookmark and unbookmark doctors button. 
-        <br>
-        Besides using the MapBox API to render the map, I’m using its geocode API query 
-        to build a function that works as my own version of an API that parses addresses into coordinates.
-        That was very useful to me since the data I gathered for the project and my crowdsource 
-        form feature are in street address format. 
-        Working with a crowdsource feature was also very challenging. 
-        I love the idea of building an open-source database of doctors with my community, 
-        but it is necessary to add constraints and validation to protect my users from fake information. 
-        My quick fix was to limit city and state, but I’m still working on implementing a more
-        effective form of address validation and that’s something I’m really excited to learn more about. 
-        <br>
-        I'm very thrilled about learning so much while building a useful resource of information. 
-        I hope many people can benefit from that! 
+        You can check out more about this project
+        <a href="https://github.com/lucianact/doctor-look-up-app" class="doctor-links">
+            <em>here!</em>
+        </a> 
     </p>
 </div>
 {% endblock %}
