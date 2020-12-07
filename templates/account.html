@@ -49,16 +49,12 @@
             <th scope="col">
                 <p class="lead" style="color: gray;">Doctors you've bookmarked</p>
             </th>
-            <!-- <th scope="col"></th> -->
-            <!-- <th scope="col"></th> -->
         </tr>
     </thead>
     <tbody>
         {% for liked in doctors_liked %}
         <tr>
             <td><a href="/doctor/{{liked[1]}}" class="doctor-links">{{liked[2]}}</a></td>
-            <!-- <td></td> -->
-            <!-- <td><a href="">delete</a></td> -->
         </tr>
         {% endfor %}
     </tbody>

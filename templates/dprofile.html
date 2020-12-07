@@ -7,7 +7,6 @@
     <form id="favorite" action="/{%if is_favorited %}un{% endif %}favorite/{{doctor_id}}" method="POST">
         <h1 class="logo" style="color:whitesmoke;"> {{doctor_name}}
         {% if current_user.get_id() %}
-        <!-- <h1 style="color:darkblue;">Hi</h1> -->
         <button class="{% if is_favorited %} favorite {% endif %} btn btn-outline-light" id="fav-button" value={{doctor_id}}>
             <i class="fa fa-heart"></i>
             {% endif %}
