@@ -31,3 +31,5 @@ function thankYou () {
   let div = document.getElementById("thank-you");
   div.style.display = "";
 }
+
+thankYou();
