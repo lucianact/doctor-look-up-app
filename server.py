@@ -247,7 +247,7 @@ def add_new_doctor_form():
         # data from docform:
         first_name = request.form.get("first-name")
         last_name = request.form.get("last-name")
-        fullname = "Dr." + first_name + " " + last_name + "*"
+        fullname = "Dr. " + first_name + " " + last_name + "*"
         # print(fullname)
 
         spanish = bool(request.form.get("spanish"))
