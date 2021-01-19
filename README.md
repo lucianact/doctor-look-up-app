@@ -20,7 +20,7 @@ especially during the year of 2020.
 
 
 ## Take a sneak peak!
-*(check out a full demo [here](https://www.youtube.com/watch?v=u1m2kKUy4L0))*
+*(check out a full demo [here](https://www.youtube.com/watch?v=vyi81DIkNi0)*
 
 ### The homepage search
 <p align="center">
