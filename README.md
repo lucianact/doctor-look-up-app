@@ -20,7 +20,7 @@ especially during the year of 2020.
 
 
 ## Take a sneak peak!
-*(check out a full demo [here](https://www.youtube.com/watch?v=vyi81DIkNi0)*
+*(check out a full demo [here](https://www.youtube.com/watch?v=vyi81DIkNi0))*
 
 ### The homepage search
 <p align="center">
@@ -69,4 +69,4 @@ especially during the year of 2020.
 
 ## Acknowledgments
 
-Shoutout to[Hackbright](https://hackbrightacademy.com/) instructors and my mentors Paige Moody and Simon Willison for their support guidance during this project!
+Shoutout to [Hackbright](https://hackbrightacademy.com/) instructors and my mentors Paige Moody and Simon Willison for their support guidance during this project!
