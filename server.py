@@ -408,14 +408,14 @@ def delete_favorites(doctor_id):
 
     return jsonify({"isFavorited": False})
 
-@app.route("/aboutme")
-def about_me_and_project():
-    """A little bit about me and my project."""
+# @app.route("/aboutme")
+# def about_me_and_project():
+#     """A little bit about me and my project."""
 
-    # feeding base.html nav bar:
-    all_doctors = crud.get_doctors()
+#     # feeding base.html nav bar:
+#     all_doctors = crud.get_doctors()
 
-    return render_template("aboutme.html", all_doctors=all_doctors)
+#     return render_template("aboutme.html", all_doctors=all_doctors)
 
 
 @app.errorhandler(404)
